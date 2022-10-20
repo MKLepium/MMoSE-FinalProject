@@ -1,4 +1,5 @@
 def menu_display(User):
+    print(User.role)
     if User.role == Role.CustomerServiceSenior:
         customer_senior_screen(User)
     if User.role == Role.CustomerServiceOfficer:
