@@ -60,28 +60,17 @@ def customer_senior_screen(User):
     if choice == 0:
         event.event_system_3000.insert_event(event.Event())
     elif choice == 1:
-        event_approval()
+        initial_event_approval()
     else:
         print("Option not recognised")
 
-def event_approval():
-    need_approval = list(filter( lambda x: x.status == "Wait For Approval", event.event_system_3000.events))
+def initial_event_approval():
+    need_approval = event.event_system_3000.by_status("Wait For Approval")
     if need_approval == []:
         print("No events need approval")
         return
     for specific_event in need_approval:
-        check_approval(specific_event)
-
-def check_approval(specific_event):
-    print(specific_event)
-    choice = input("Approve? [y/n]")
-    if choice == "y":
-        event.event_system_3000.search_event(specific_event.id).status = "Approval Given" # no none case since already found
-    elif choice == "n":
-        return #  continue to next
-    else:
-        print("Not recognized")
-        check_approval(specific_event)
+        specific_event.first_approval()
 
 def customer_service_officer(User):
     print("0. Initiate Event Request")
@@ -95,18 +84,61 @@ def customer_service_officer(User):
 def financial_manager(User):
     print("0. View Financial Requests")
     print("1. Update Event Budget")
+    print("2: Event requests awaiting financial review")
     choice = int(input("Enter choice: "))
     if choice == 0:
         financialrequest.system.print_all()
-    if choice == 1:
+    elif choice == 1:
         event_id = int(input("Insert Event ID: "))
         specificed_event = event.event_system_3000.search_event(event_id)
+        if specificed_event == None:
+            print("No event found.")
+            return
+        else:
+            specificed_event.budget.update()
+            print("Event saved:")
+            print(specificed_event)
+            print("==========================")
+    elif choice == 2:
+        finanical_event_approval()
     else:
         print("Option not recognised")
 
+def update_event_budget():
+    choice = int(input("Update "))
+    if choice == 0:
+        financialrequest.system.print_all()
+    elif choice == 1:
+        update_event_budget()
+    else:
+        print("Option not recognised")
+    event_id = int(input("Insert Event ID: "))
+    specificed_event = event.event_system_3000.search_event(event_id)
+    if specificed_event == None:
+        print("No event found.")
+        update_event_budget()
+
+def finanical_event_approval():
+    need_approval = event.event_system_3000.by_status("In Financial Review")
+    if need_approval == []:
+        print("No events need approval")
+        return
+    for specific_event in need_approval:
+        specific_event.financial_approval()
+
 
 def administration_manager(User):
-    print("To be implemented")
+    print("0: Event requests awaiting final review")
+    choice = int(input("What do you want to do: "))
+    if choice == 0:
+        need_approval = event.event_system_3000.by_status("In Final Review")
+        if need_approval == []:
+            print("No events need approval")
+            return
+        for specific_event in need_approval:
+            specific_event.final_approval()
+    else:
+        print("Option not recognised")
 
 
 def service_manager(User):
@@ -115,8 +147,8 @@ def service_manager(User):
     choice = int(input("Enter choice: "))
     if choice == 0:
         personnelrequest.system.insert_request(personnelrequest.PersonnelRequest())
-    if choice == 1:
-        financialrequest.system.insert_request(financialrequest.FinanicalRequest())
+    elif choice == 1:
+        financialrequest.system.insert_request(financialrequest.FinancialRequest())
     else:
         print("Option not recognised")
 

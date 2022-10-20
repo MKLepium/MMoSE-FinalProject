@@ -6,7 +6,7 @@ from src import menu
 
 def test_search_and_approve_event(monkeypatch):
     # Setup EVENT
-    inputs = iter(["29.09.2022", "Company Party2", "90", "No Preferences", "9000€"])
+    inputs = iter(["Company Party2", "29.09.2022", "90", "No Preferences", "9000€"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
     event.event_system_3000.insert_event(event.Event())
     event1 = event.event_system_3000.search_event(0)
@@ -14,12 +14,12 @@ def test_search_and_approve_event(monkeypatch):
     #Check approval
     inputs = iter(["y"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
-    menu.check_approval(event1)
-    assert event1.status == "Approval Given"
+    event1.first_approval()
+    assert event1.status == "In Financial Review"
 
 
 def test_create_event(monkeypatch):
-    inputs = iter(["29.09.2022", "Company Party", "90", "No Preferences", "9000€"])
+    inputs = iter(["Company Party", "29.09.2022", "90", "No Preferences", "9000€"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
     event1 = event.Event()
     assert event1.active == False
@@ -31,10 +31,10 @@ def test_create_event(monkeypatch):
     assert event1.tasks == []
 
 def test_incremental_id(monkeypatch):
-    inputs = iter(["29.09.2022", "Company Party", "90", "No Preferences", "9000€"])
+    inputs = iter(["Company Party", "29.09.2022", "90", "No Preferences", "9000€"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
     event1 = event.Event()
-    inputs = iter(["29.09.2022", "Company Party", "90", "No Preferences", "9000€"])
+    inputs = iter(["Company Party", "29.09.2022", "90", "No Preferences", "9000€"])
     monkeypatch.setattr('builtins.input', lambda _: next(inputs))
     event2 = event.Event()
     assert (event1.id + 1) == event2.id

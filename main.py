@@ -9,6 +9,7 @@ from src import event
 def main():
     User = login.login()
     menu.menu_display(User)
+    main()
 
 if __name__ == "__main__":
     # Setup
