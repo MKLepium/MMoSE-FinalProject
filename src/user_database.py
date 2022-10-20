@@ -30,3 +30,6 @@ users = [
     User('Johnny', 'asdf', Role.ServiceTeamMember),
     User('Simon', 'asdf', Role.HumanRessources),
 ]
+
+def find_user(name):
+    return next((x for x in users if x.name == name), None)

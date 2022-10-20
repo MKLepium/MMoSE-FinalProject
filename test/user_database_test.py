@@ -6,3 +6,6 @@ def test_user_create():
    assert User.password == "yeet"
    assert User.role == user_database.Role.AdministrationManager
 
+def test_is_user_in_db():
+   User = user_database.find_user('Johnny')
+   assert User is not None
