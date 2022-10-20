@@ -3,13 +3,16 @@
 """
 from src import login
 from src.user_database import Role
-from src import display
-
+from src import menu
+from src import event
 
 def main():
     User = login.login()
-    display.menu_display(User)
+    menu.menu_display(User)
 
 if __name__ == "__main__":
+    # Setup
+
+    # Start
     main()
 
