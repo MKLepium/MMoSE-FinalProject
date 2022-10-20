@@ -2,6 +2,7 @@ from src import event
 from src import user_database
 from src import personnelrequest
 from src import financialrequest
+from src import task
 def menu_display(User):
     menu_default()
     choice = int(input("What do you want to do: "))
@@ -58,7 +59,7 @@ def customer_senior_screen(User):
     print("1. Events requests awaiting approval")
     choice = int(input("Enter choice: "))
     if choice == 0:
-        event.event_system_3000.insert_event(event.Event())
+        event.event_system_3000.insert_event(event.Event(task.system))
     elif choice == 1:
         initial_event_approval()
     else:
@@ -76,7 +77,7 @@ def customer_service_officer(User):
     print("0. Initiate Event Request")
     choice = input("What do you want to do: ")
     if choice == 0:
-        event.event_system_3000.insert_event(event.Event())
+        event.event_system_3000.insert_event(event.Event(task.system))
     else:
         print("Option not recognised")
 
@@ -104,20 +105,6 @@ def financial_manager(User):
     else:
         print("Option not recognised")
 
-def update_event_budget():
-    choice = int(input("Update "))
-    if choice == 0:
-        financialrequest.system.print_all()
-    elif choice == 1:
-        update_event_budget()
-    else:
-        print("Option not recognised")
-    event_id = int(input("Insert Event ID: "))
-    specificed_event = event.event_system_3000.search_event(event_id)
-    if specificed_event == None:
-        print("No event found.")
-        update_event_budget()
-
 def finanical_event_approval():
     need_approval = event.event_system_3000.by_status("In Financial Review")
     if need_approval == []:
@@ -144,17 +131,47 @@ def administration_manager(User):
 def service_manager(User):
     print("0. Initiate Personnel Request")
     print("1. Initiate Financial Request")
+    print("2. Add task for an event")
+    print("3. See task list")
+    print("4. Close task")
     choice = int(input("Enter choice: "))
     if choice == 0:
         personnelrequest.system.insert_request(personnelrequest.PersonnelRequest())
     elif choice == 1:
         financialrequest.system.insert_request(financialrequest.FinancialRequest())
+    elif choice == 2:
+        event_id = int(input("Insert Event ID: "))
+        specificed_event = event.event_system_3000.search_event(event_id)
+        if specificed_event == None:
+            print("No event found.")
+            return
+        else:
+            task.system.insert_task(task.Task(specificed_event))
+            print("==========================")
+            print(f"All task list for {specificed_event.name}:")
+            print("- " + '\n- '.join(map(str, specificed_event.tasks())))
+            print("==========================")
+    elif choice == 3:
+        task.system.print_all()
+    elif choice == 4:
+        task_id = int(input("Insert Task ID: "))
+        specificed_task = task.system.search_task(task_id)
+        if specificed_task == None:
+            print("No task found.")
+            return
+        else:
+            specificed_task.close()
     else:
         print("Option not recognised")
 
 
 def service_team_member(User):
-    print("To be implemented")
+    print("0. See task list")
+    choice = int(input("Enter choice: "))
+    if choice == 0:
+        task.system.print_all()
+    else:
+        print("Option not recognised")
 
 
 def human_ressources(User):

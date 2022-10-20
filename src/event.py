@@ -4,7 +4,8 @@ import itertools
 class Event:
     newid = itertools.count()
         
-    def __init__(self):
+    def __init__(self, TaskSystem):
+        self.__task_system = TaskSystem
         self.name = input("What is the name of the Event: ")
         self.date = input("What is the date of the Event: ")
         self.active = False
@@ -16,11 +17,13 @@ class Event:
         Approved
         """
         self.expected_attendees = input("How many people are expected: ")
-        self.tasks = []
+        self.tasks = self.get_tasks
         self.preferences = input("Additional Preferences: ")
         self.budget = Budget(self)
         self.financial_review = "pending"
         self.id = next(Event.newid)
+    def get_tasks(self):
+        return self.__task_system.by_event(self)
     def first_approval(self):
         print(self)
         choice = input(f"Approve event {self.id}? [y/n] ")
@@ -53,9 +56,9 @@ class Event:
             print("Not recognized")
             self.final_approval()
     def __repr__(self):
-        return "Id: " + str(self.id) + "\nName: "+ self.name + "\nDate: " + self.date + "\nBudget: " + str(self.budget.budget) + "\nStatus: " + self.status + "\nFinancial Review: " + self.financial_review
+        return "Id: " + str(self.id) + "\nName: "+ self.name + "\nDate: " + self.date + "\nBudget: " + str(self.budget.budget) + "\nStatus: " + self.status + "\nFinancial Review: " + self.financial_review + "\nTasks: \n- " + '\n- '.join(map(str, self.tasks()))
     def __str__(self):
-        return "Id: " + str(self.id) + "\nName: "+ self.name + "\nDate: " + self.date + "\nBudget: " + str(self.budget.budget) + "\nStatus: " + self.status + "\nFinancial Review: " + self.financial_review
+        return "Id: " + str(self.id) + "\nName: "+ self.name + "\nDate: " + self.date + "\nBudget: " + str(self.budget.budget) + "\nStatus: " + self.status + "\nFinancial Review: " + self.financial_review + "\nTasks: \n- " + '\n- '.join(map(str, self.tasks()))
 
 class Budget:
     def __init__(self, Event):
